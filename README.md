@@ -80,7 +80,7 @@ networks:
 
 Chạy:
 ```bash
-docker-compose -f docker-compose-wordpress.yml up -d
+docker compose -f docker-compose-wordpress.yml up -d
 ```
 
 ---
@@ -160,12 +160,12 @@ Thư mục `nginx/rules/` có thể để trống hoặc thêm rule OWASP CRS sa
 1. Ở thư mục `mywordpress`, chạy compose WordPress + MariaDB::
 
 ```bash
-docker-compose -f docker-compose.yml up -d
+docker compose -f docker-compose.yml up -d
 ```
 2. Chạy Nginx (có ModSecurity) sau:
 
 ```bash
-docker-compose -f docker-compose-nginx.yml up -d
+docker compose -f docker-compose-nginx.yml up -d
 ```
 * Trình duyệt truy cập: `http://localhost:8080`
 * Dữ liệu WordPress nằm trong `wordpress_data/`
@@ -319,13 +319,13 @@ networks:
 #### 1. Start WordPress + MariaDB:
 
 ```bash
-docker-compose -f docker-compose-wordpress.yml up -d
+docker compose -f docker-compose-wordpress.yml up -d
 ```
 
 #### 2. Start Caddy:
 
 ```bash
-docker-compose -f caddy/docker-compose-caddy.yml up -d --build
+docker compose -f caddy/docker-compose-caddy.yml up -d --build
 ```
 
 ---
