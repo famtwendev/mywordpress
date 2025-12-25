@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: owasp/modsecurity:nginx-alpine
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./wordpress_data:/var/www/html  # chia sẻ dữ liệu với WordPress
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/modsecurity.conf:/etc/modsecurity/modsecurity.conf
+      - ./nginx/rules:/etc/modsecurity/rules
+    networks:
+      - wp-network
+    depends_on:
+      - wordpress
+      condition: service_healthy
+
+networks:
+  wp-network:
+    external: true
