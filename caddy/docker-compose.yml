@@ -1,7 +1,7 @@
 services:
   caddy:
     build: .
-    container_name: caddy
+    container_name: caddy_server
     ports:
       - "80:80"
       - "443:443"
