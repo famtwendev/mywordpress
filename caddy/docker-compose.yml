@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   caddy:
     build: .
@@ -8,14 +6,12 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ../wordpress_data:/var/www/html   # share WordPress data
+      - ../wordpress_mariadb/wordpress_data:/var/www/html   # share WordPress data
       - ./waf:/etc/caddy/waf              # waf config
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./log:/var/log/caddy  # mount folder log ra host
     networks:
       - wp-network
-    depends_on:
-      - wordpress
 
 networks:
   wp-network:

@@ -13,15 +13,17 @@ Giả sử bạn tạo một thư mục dự án, ví dụ `mywordpress`:
 
 ```
 wordpress/
-├─ docker-compose-wordpress.yml
-├─ wordpress_data/     # dữ liệu WordPress
-├─ mariadb_data/       # dữ liệu MariaDB
+├─ wordpress_mariadb/ 
+│   └─ wordpress_data/     # dữ liệu WordPress
+│   └─ mariadb_data/       # dữ liệu MariaDB
+│   └─ docker-compose.yml
 ├─ nginx/
-│   └─ default.conf    # config Nginx
-│   └─ docker-compose-nginx.yml    # compose Nginx + Modsecurity
+│   └─ default.conf        # config Nginx
+│   └─ docker-compose.yml  # compose Nginx + Modsecurity
 ├─ caddy/
 │   ├─ Dockerfile          # build xcaddy với plugin
 │   ├─ Caddyfile           # cấu hình Caddy
+│   ├─ docker-compose.yml  
 │   └─ waf/
 │       ├─ config.conf
 │       ├─ coreruleset/
@@ -35,8 +37,6 @@ wordpress/
 File compose WordPress + MariaDB `docker-compose-wordpress.yml`
 Nội dung:
 ```yaml
-version: '3.8'
-
 services:
   mariadb:
     image: mariadb:10.11
@@ -65,12 +65,6 @@ services:
       - wp-network
     depends_on:
       - mariadb
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
 
 networks:
   wp-network:
@@ -90,8 +84,6 @@ docker compose -f docker-compose-wordpress.yml up -d
 ### **Compose Nginx riêng (có ModSecurity)**
 File docker-compose-nginx.yml:
 ```yaml
-version: '3.8'
-
 services:
   nginx:
     image: owasp/modsecurity:nginx-alpine
@@ -99,15 +91,12 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./wordpress_data:/var/www/html  # chia sẻ dữ liệu với WordPress
+      - ../wordpress_mariadb/wordpress_data:/var/www/html  # chia sẻ dữ liệu với WordPress
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/modsecurity.conf:/etc/modsecurity/modsecurity.conf
       - ./nginx/rules:/etc/modsecurity/rules
     networks:
       - wp-network
-    depends_on:
-      - wordpress
-      condition: service_healthy
 
 networks:
   wp-network:
@@ -287,11 +276,9 @@ keycloak.vinahost.cloud {
 }
 ```
 
-### docker-compose
-File: `caddy/docker-compose-caddy.yml`
+### docker-compose Caddy
+File: `caddy/docker-compose.yml`
 ```yaml
-version: '3.8'
-
 services:
   caddy:
     build: .
@@ -300,14 +287,12 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ../wordpress_data:/var/www/html   # share WordPress data
+      - ../wordpress_mariadb/wordpress_data:/var/www/html   # share WordPress data
       - ./waf:/etc/caddy/waf              # waf config
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./log:/var/log/caddy  # mount folder log ra host
     networks:
       - wp-network
-    depends_on:
-      - wordpress
 
 networks:
   wp-network:
@@ -319,13 +304,13 @@ networks:
 #### 1. Start WordPress + MariaDB:
 
 ```bash
-docker compose -f docker-compose-wordpress.yml up -d
+docker compose up -d
 ```
 
 #### 2. Start Caddy:
 
 ```bash
-docker compose -f caddy/docker-compose-caddy.yml up -d --build
+docker compose up -d --build
 ```
 
 ---
