@@ -13,7 +13,7 @@ Giả sử bạn tạo một thư mục dự án, ví dụ `mywordpress`:
 
 ```
 wordpress/
-├─ docker-compose.yml
+├─ docker-compose-wordpress.yml
 ├─ wordpress_data/     # dữ liệu WordPress
 ├─ mariadb_data/       # dữ liệu MariaDB
 ├─ nginx/
@@ -32,7 +32,7 @@ wordpress/
 ## 1️⃣ CẤU HÌNH WORDPRESS AND MARIADB
 
 ### **File Compose WordPress + MariaDB**
-File compose WordPress + MariaDB `docker-compose.yml`
+File compose WordPress + MariaDB `docker-compose-wordpress.yml`
 Nội dung:
 ```yaml
 version: '3.8'
