@@ -6,7 +6,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ../wordpress_mariadb/wordpress_data:/var/www/html   # share WordPress data
+      - ../wordpress/wordpress_data:/var/www/html   # share WordPress data
       - ./waf:/etc/caddy/waf              # waf config
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./log:/var/log/caddy  # mount folder log ra host

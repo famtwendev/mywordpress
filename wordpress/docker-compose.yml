@@ -1,0 +1,18 @@
+services:
+  wordpress:
+    image: wordpress:php8.4-fpm-alpine
+    container_name: wordpress
+    environment:
+      WORDPRESS_DB_HOST: <IP_HOST>:3306
+      WORDPRESS_DB_NAME: wordpressdb
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: admin@123
+    volumes:
+      - ./wordpress_data:/var/www/html
+    networks:
+      - wp-network
+    restart: always
+
+networks:
+  wp-network:
+    name: wp-network

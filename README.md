@@ -12,10 +12,9 @@ Tham khảo source image bitnami: https://raw.githubusercontent.com/bitnami/cont
 Giả sử bạn tạo một thư mục dự án, ví dụ `mywordpress`:
 
 ```
-wordpress/
-├─ wordpress_mariadb/ 
+mywordpress/
+├─ wordpress/ 
 │   └─ wordpress_data/     # dữ liệu WordPress
-│   └─ mariadb_data/       # dữ liệu MariaDB
 │   └─ docker-compose.yml
 ├─ nginx/
 │   └─ default.conf        # config Nginx
@@ -38,24 +37,11 @@ File compose WordPress + MariaDB `docker-compose-wordpress.yml`
 Nội dung:
 ```yaml
 services:
-  mariadb:
-    image: mariadb:10.11
-    container_name: mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: root@123
-      MYSQL_DATABASE: wordpressdb
-      MYSQL_USER: wp_user
-      MYSQL_PASSWORD: admin@123
-    volumes:
-      - ./mariadb_data:/var/lib/mysql
-    networks:
-      - wp-network
-
   wordpress:
-    image: wordpress:php8.2-fpm-alpine
+    image: wordpress:php8.4-fpm-alpine
     container_name: wordpress
     environment:
-      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_HOST: <IP_HOST_MARIADB>:3306
       WORDPRESS_DB_NAME: wordpressdb
       WORDPRESS_DB_USER: wp_user
       WORDPRESS_DB_PASSWORD: admin@123
@@ -63,9 +49,6 @@ services:
       - ./wordpress_data:/var/www/html
     networks:
       - wp-network
-    depends_on:
-      - mariadb
-
 networks:
   wp-network:
     name: wp-network
@@ -91,7 +74,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ../wordpress_mariadb/wordpress_data:/var/www/html  # chia sẻ dữ liệu với WordPress
+      - ../wordpress/wordpress_data:/var/www/html  # chia sẻ dữ liệu với WordPress
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/modsecurity.conf:/etc/modsecurity/modsecurity.conf
       - ./nginx/rules:/etc/modsecurity/rules
@@ -287,7 +270,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ../wordpress_mariadb/wordpress_data:/var/www/html   # share WordPress data
+      - ../wordpress/wordpress_data:/var/www/html   # share WordPress data
       - ./waf:/etc/caddy/waf              # waf config
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./log:/var/log/caddy  # mount folder log ra host
