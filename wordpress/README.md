@@ -16,7 +16,7 @@ Giả sử RDS MySQL của bạn có thông tin:
 ```yaml
 services:
   wordpress:
-    image: wordpress:php8.2-fpm-alpine
+    image: wordpress:php8.4-fpm-alpine
     container_name: wordpress
     environment:
       WORDPRESS_DB_HOST: mydb.xxxxx.ap-southeast-1.rds.amazonaws.com:3306
@@ -45,18 +45,14 @@ services:
 * User `wp_user` có quyền:
 
 ```sql
+CREATE DATABASE wordpressdb DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'wp_user'@'%' IDENTIFIED BY 'admin@123';
 GRANT ALL PRIVILEGES ON wordpressdb.* TO 'wp_user'@'%';
 FLUSH PRIVILEGES;
+EXIT;
 ```
 
-### ✅ 3. Charset (khuyến nghị)
-
-```sql
-ALTER DATABASE wordpressdb
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-```
-
+## ▶️ Chạy Docker compose
 ```bash
 docker compose up -d
 ```
