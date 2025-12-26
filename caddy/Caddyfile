@@ -1,75 +1,11 @@
-{
-    order coraza_waf first
-}
-keycloak.vinahost.cloud {
-       coraza_waf {
-                include /etc/caddy/waf/config.conf
-                #include /etc/caddy/waf/coreruleset/crs-setup.conf.example
-                include /etc/caddy/waf/crs-setup-custom.conf
-               include /etc/caddy/waf/coreruleset/rules/*.conf
-
-
-               directives `
-                       SecAction "id:1,pass,log"
-                       SecRule ARGS "(?i).*" "id:900001,phase:2,log,pass,msg:'Log GET query string'"
-                       SecRule REQUEST_URI "/testp1" "id:2, deny, log, phase:1"
-                               SecRule REQUEST_URI "/testp3" "id:4, deny, log, phase:3"
-                       # Block XML-RPC brute-force
-                       SecRule REQUEST_URI "/xmlrpc.php" "id:900002,phase:2,deny,log,msg:'Block XML-RPC'"
-                       # Block common WP exploits (RCE, LFI)
-                       SecRule ARGS "@rx (eval|base64_decode|system|exec|shell_exec)" "id:900003,phase:2,deny,log,msg:'Potential WP RCE'"
-                       # Block sensitive paths
-                       SecRule REQUEST_URI "@rx /(wp-config\.php|\.htaccess|wp-admin/install\.php)" "id:900004,phase:1,deny,log,msg:'Block sensitive WP paths'"
-                       SecRule REQUEST_URI "@beginsWith /wp-json/" "id:100001,phase:1,pass,nolog,ctl:ruleEngine=Off"
-
-
-
-               `
-       }
+http://192.168.20.169 {
         root * /var/www/html
         encode zstd gzip
         php_fastcgi wordpress:9000
         file_server
-        tls tuyennp.tts@vinahost.com {
+        tls internal {
                 protocols tls1.2 tls1.3
         }
-       header {
-               Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-               X-Content-Type-Options "nosniff"
-               X-Frame-Options "DENY"
-               Referrer-Policy "no-referrer-when-downgrade"
-               X-XSS-Protection "1; mode=block"
-               Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; object-src 'none'; frame-ancestors 'none'; base-uri 'self';"
-
-       }
-       @xmlrpc path /xmlrpc.php
-       respond @xmlrpc 403
-
-       @forbidden {
-               path /readme.html
-               path /wp-config.php
-               path *.ini
-               path *.env
-               path *.sql
-               path *.bak
-       }
-       respond @forbidden 403
-
-       @uploads_php path /wp-content/uploads/*.php
-       respond @uploads_php 403
-
-
-       @login {
-               path /wp-login.php
-       }
-       rate_limit @login {
-               zone login {
-                       key {remote_ip}
-                       events 10
-                       window 2m
-                       burst 5
-               }
-       }
 
         log {
             output file /var/log/caddy/example.access.log {

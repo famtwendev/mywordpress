@@ -1,13 +1,12 @@
 services:
   caddy:
-    build: .
+    image: caddy:latest
     container_name: caddy_server
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ../wordpress/wordpress_data:/var/www/html   # share WordPress data
-      - ./waf:/etc/caddy/waf              # waf config
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./log:/var/log/caddy  # mount folder log ra host
     networks:
