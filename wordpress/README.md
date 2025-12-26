@@ -22,7 +22,7 @@ services:
       WORDPRESS_DB_HOST: mydb.xxxxx.ap-southeast-1.rds.amazonaws.com:3306
       WORDPRESS_DB_NAME: wordpressdb
       WORDPRESS_DB_USER: wp_user
-      WORDPRESS_DB_PASSWORD: admin@123
+      WORDPRESS_DB_PASSWORD: Admin@123
     volumes:
       - ./wordpress_data:/var/www/html
     restart: always
@@ -46,7 +46,7 @@ services:
 
 ```sql
 CREATE DATABASE wordpressdb DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'wp_user'@'%' IDENTIFIED BY 'admin@123';
+CREATE USER 'wp_user'@'%' IDENTIFIED BY 'Admin@123';
 GRANT ALL PRIVILEGES ON wordpressdb.* TO 'wp_user'@'%';
 FLUSH PRIVILEGES;
 EXIT;

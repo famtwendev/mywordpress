@@ -44,7 +44,7 @@ services:
       WORDPRESS_DB_HOST: <IP_HOST_MARIADB>:3306
       WORDPRESS_DB_NAME: wordpressdb
       WORDPRESS_DB_USER: wp_user
-      WORDPRESS_DB_PASSWORD: admin@123
+      WORDPRESS_DB_PASSWORD: Admin@123
     volumes:
       - ./wordpress_data:/var/www/html
     networks:
